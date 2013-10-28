@@ -6,6 +6,7 @@ MySQL PDO Wrapper
 A very simple PDO Wrapper for making the process of prepared statements easier.
 
 Example of use can be found in Examples.php
+Requires PHP 5.4+ at this time.
 
 ###Insert example:
 ```
