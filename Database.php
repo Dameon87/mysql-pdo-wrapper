@@ -61,14 +61,14 @@ class Database {
 
 		if ($statement->errorCode() === '00000' && $statement->rowCount() >= 1) {
 			$this->rows = $statement->rowCount();
-            return true;
+            		return true;
 		} else if ($statement->rowCount() < 1) {
 			$this->lastError = "Query Succeeded, but " . $statement->rowCount() . " Rows were affected.";
 			return false;
-        } else {
+        	} else {
 			$this->lastError = "Error: " . $this->errorInfo()[2];
 			return false;
-        }
+        	}
 	}
 
 	public function getLastError() {
