@@ -82,5 +82,5 @@ class Database {
 	
 	public function getLastId() {
         	return $this->lastId;
-    	}
+	}
 }
