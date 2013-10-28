@@ -1,4 +1,11 @@
 <?php
+/**
+* A simple wrapper for handling MySQL via PDO.
+* @author Jonathon Bischof
+* @copyright 2013 Jonathon Bischof
+* @license http://www.gnu.org/licenses/gpl-3.0.html
+* @version Alpha
+*/
 
 class Database {
 
