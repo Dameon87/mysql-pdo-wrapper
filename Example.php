@@ -18,9 +18,9 @@ $where = 'email="user@example.com"';
 
 // Lets test a simple insert.
 if ($db->insert($table, $data)) {
-	echo 'Data Inserted. ID: ' . $db->getLastId();
+	echo '[Success] : Data Inserted. ID: ' . $db->getLastId();
 } else {
-	echo 'Error: ' . $db->getLastError();
+	echo '[Error] : ' . $db->getLastError();
 }
 
 // Here is a simple update query.
