@@ -2,7 +2,7 @@
 
 class Database {
 
-	private $conn;
+    private $conn;
 	private $lastError;
 	private $fields;
 	private $values;
@@ -23,8 +23,9 @@ class Database {
 
 		$sql = "INSERT INTO " . $table . "(" . implode($this->fields, ', ') . ") VALUES(" . implode($this->binds, ', ') .")";
 		$this->statement = $this->conn->prepare($sql);
-		$this->Bind($data);
+		$this->bind($data);
 		$this->statement->execute();
+		$this->reset();
 
 		if ($this->statement->errorCode() === '00000') {
 			return true;
@@ -39,8 +40,9 @@ class Database {
 
 		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . $where;
 		$this->statement = $this->conn->prepare($sql);
-		$this->Bind($data);
+		$this->bind($data);
 		$this->statement->execute();
+		$this->reset();
 
 		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
             return true;
@@ -58,9 +60,10 @@ class Database {
 
 		$sql = "SELECT " . $fields . " FROM " . $table . " WHERE " . implode($this->binds, ',');
 		$this->statement = $this->conn->prepare($sql);
-		$this->Bind($data);
+		$this->bind($data);
 		$this->statement->execute();
-
+		$this->reset();
+		
 		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
 			return $this->statement->fetchAll(PDO::FETCH_OBJ);
 		} else if ($this->statement->rowCount() < 1) {
@@ -80,7 +83,7 @@ class Database {
         }
 	}
 
-	public function Bind($data) {
+	public function bind($data) {
 		foreach ($data as $field => &$value) {
             $this->statement->bindParam(":$field", $value);
         }
@@ -98,8 +101,7 @@ class Database {
 		return $this->statement->lastInsertId();
 	}
 
-	public function Reset() {
-		unset($this->statement);
+	public function reset() {
 		unset($this->binds);
 		unset($this->values);
 		unset($this->fields);
