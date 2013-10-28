@@ -26,9 +26,6 @@ if ($db->insert($table, $data)) {
 	echo '[Error] : ' . $db->getLastError();
 }
 
-// Call a Reset to ensure a clean slate.
-$db->Reset();
-
 // Here is a simple update query.
 
 if ($db->update($table, $data, $where)) {
@@ -36,9 +33,6 @@ if ($db->update($table, $data, $where)) {
 } else {
 	echo '[Fail] : ' . $db->getLastError();
 }
-
-// Call a Reset to ensure a clean slate.
-$db->Reset();
 
 // Here is a simple select query.
 
