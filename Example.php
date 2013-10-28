@@ -9,14 +9,14 @@ $table = 'users';
 $username = 'example';
 $email = 'user@example.net';
 $name = 'Example User';
-$data = array(
+$data = [
 	'username' => $username,
 	'email' => $email,
 	'name' => $name
-);
-$selectdata = array(
+];
+$selectdata = [
 	'email' => $email
-);
+];
 $where = 'email="user@example.com"';
 
 // Lets test a simple insert.
