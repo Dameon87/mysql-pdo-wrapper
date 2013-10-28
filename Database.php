@@ -2,13 +2,13 @@
 
 class Database {
 
-	private $table;
 	private $conn;
-	private $sql;
 	private $lastError;
-	private $rows;
-	private $lastId;
-	
+	private $fields;
+	private $values;
+	private $binds;
+	private $statement;
+
 	public function __construct($dbname, $dbuser, $dbpass, $dbhost = 'localhost', $charset = 'utf8') {
 		$dsn = 'mysql:dbname=' . $dbname . ';host=' . $dbhost . ';charset=' . $charset;
 		try {
@@ -17,59 +17,73 @@ class Database {
 			echo 'Database Connection Failed with Message: ' . $e->getMessage();
 		}
 	}
-	
+
 	public function insert($table, $data) {
-		$fields = '';
-		$values = '';
-		$binds = '';
-		foreach ($data as $field => $value) {
-			$fields[] = $field;
-			$binds[] = ":$field";
-			$values[] = $value;
-		}
-		$sql = "INSERT INTO " . $table . "(" . implode($fields, ', ') . ") VALUES(" . implode($binds, ', ') .")";
-		$statement = $this->conn->prepare($sql); //Actually make a PDO prepare statement here.
-		
-		foreach ($data as $field => &$value) {
-			$statement->bindParam(":$field", $value);
-		}
-		
-		$statement->execute();
-		
-		if ($statement->errorCode() === '00000') {
-			$this->rows = $statement->rowCount();
+		$this->parseData($data);
+
+		$sql = "INSERT INTO " . $table . "(" . implode($this->fields, ', ') . ") VALUES(" . implode($this->binds, ', ') .")";
+		$this->statement = $this->conn->prepare($sql);
+		$this->Bind($data);
+		$this->statement->execute();
+
+		if ($this->statement->errorCode() === '00000') {
 			return true;
 		} else {
-			$this->lastError = 'Failed: ' . $statement->errorInfo()[2];
+			$this->lastError = 'Failed: ' . $this->statement->errorInfo()[2];
 			return false;
 		}
 	}
 
 	public function update($table, $data, $where) {
-		foreach ($data as $field => $value) {
-			$fields[] = $field;
-			$values[] = $value;
-			$binds[] = "$field=:$field";
-		}
-		$sql = "UPDATE " . $table . " SET " . implode($binds, ',') . " WHERE " . $where;
-		$statement = $this->conn->prepare($sql);
-		
-		foreach ($data as $field => &$value) {
-			$statement->bindParam(":$field", $value);
-		}
-		
-		$statement->execute();
+		$this->parseData($data);
 
-		if ($statement->errorCode() === '00000' && $statement->rowCount() >= 1) {
-			$this->rows = $statement->rowCount();
-            		return true;
-		} else if ($statement->rowCount() < 1) {
-			$this->lastError = "Query Succeeded, but " . $statement->rowCount() . " Rows were affected.";
+		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . $where;
+		$this->statement = $this->conn->prepare($sql);
+		$this->Bind($data);
+		$this->statement->execute();
+
+		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
+            return true;
+		} else if ($this->statement->rowCount() < 1) {
+			$this->lastError = "Query Succeeded, but " . $this->statement->rowCount() . " Rows were affected.";
 			return false;
-        	} else {
+        } else {
 			$this->lastError = "Error: " . $this->errorInfo()[2];
 			return false;
-        	}
+        }
+	}
+
+	public function select($table, $data, $fields = "*") {
+		$this->parseData($data);
+
+		$sql = "SELECT " . $fields . " FROM " . $table . " WHERE " . implode($this->binds, ',');
+		$this->statement = $this->conn->prepare($sql);
+		$this->Bind($data);
+		$this->statement->execute();
+
+		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
+			return $this->statement->fetchAll(PDO::FETCH_OBJ);
+		} else if ($this->statement->rowCount() < 1) {
+			$this->lastError = "Query Succeeded, but " . $this->statement->rowCount() . " Rows were affected.";
+			return false;
+		} else {
+			$this->lastError = "Error: " . $this->errorInfo()[2];
+			return false;
+		}
+	}
+
+	public function parseData($data) {
+		foreach ($data as $field => $value) {
+            $this->fields[] = $field;
+            $this->values[] = $value;
+            $this->binds[] = "$field=:$field";
+        }
+	}
+
+	public function Bind($data) {
+		foreach ($data as $field => &$value) {
+            $this->statement->bindParam(":$field", $value);
+        }
 	}
 
 	public function getLastError() {
@@ -77,10 +91,17 @@ class Database {
 	}
 
 	public function rowsAffected() {
-		return $this->rows;
+		return $this->statement->rowCount();
 	}
-	
+
 	public function getLastId() {
-        	return $this->lastId;
+		return $this->statement->lastInsertId();
+	}
+
+	public function Reset() {
+		unset($this->statement);
+		unset($this->binds);
+		unset($this->values);
+		unset($this->fields);
 	}
 }
