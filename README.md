@@ -15,6 +15,12 @@ $db->insert('Table', array('field' => 'value, 'field2' => 'value2');
 
 ###Update example:
 ```
-$db->insert('Table', array('field' => 'value, 'field2' => 'value2', 'field3="value3"');
+$db->insert('Table', array('field' => 'value', 'field2' => 'value2', 'field3="value3"');
 ```
 #####Parameters: (Table, Array of Fields=>Values, WHERE)
+
+###Select example:
+```
+$db->select('Table', array('field' => 'value'), 'fields,defaults,to,*');
+```
+#####Parameters: (Table, Array of Fields=>Values, Fields)
