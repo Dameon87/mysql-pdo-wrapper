@@ -17,7 +17,7 @@ $data = [
 $selectdata = [
 	'email' => $email
 ];
-$where = 'email="user@example.com"';
+$where = ['email' => 'user@example.com'];
 
 // Lets test a simple insert.
 if ($db->insert($table, $data)) {
@@ -37,6 +37,16 @@ if ($db->update($table, $data, $where)) {
 // Here is a simple select query.
 
 $result = $db->select($table, $selectdata);
+if ($result) {
+    echo '[Success] : Rows Affected ' . $db->rowsAffected();
+    var_dump($result);
+} else {
+    echo '[Fail] : ' . $db->getLastError();
+}
+
+// Here is a simple delete query.
+
+$result = $db->delete($table, $where);
 if ($result) {
     echo '[Success] : Rows Affected ' . $db->rowsAffected();
     var_dump($result);

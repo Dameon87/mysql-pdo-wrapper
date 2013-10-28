@@ -14,6 +14,7 @@ class Database {
 	private $fields;
 	private $values;
 	private $binds;
+	private $where;
 	private $statement;
 
 	public function __construct($dbname, $dbuser, $dbpass, $dbhost = 'localhost', $charset = 'utf8') {
@@ -43,11 +44,12 @@ class Database {
 	}
 
 	public function update($table, $data, $where) {
-		$this->parseData($data);
+		$this->parseData($data, $where);
 
-		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . $where;
+		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . implode($this->where, ',');
 		$this->statement = $this->conn->prepare($sql);
 		$this->bind($data);
+		$this->bind($where);
 		$this->statement->execute();
 		$this->reset();
 
@@ -82,11 +84,32 @@ class Database {
 		}
 	}
 
-	public function parseData($data) {
+	public function delete($table, $data) {
+		$this->parseData($data);
+
+		$sql = "DELETE FROM " . $table . " WHERE " . implode($this->binds, ',');
+		$this->statement = $this->conn->prepare($sql);
+		$this->bind($data);
+		$this->statement->execute();
+		$this->reset();
+
+		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
+			return $this->statement->fetchAll(PDO::FETCH_OBJ);
+		} else if ($this->statement->rowCount() < 1) {
+			$this->lastError = "Query Succeeded, but " . $this->statement->rowCount() . " Rows were affected.";
+			return false;
+		} else {
+			$this->lastError = "Error: " . $this->errorInfo()[2];
+			return false;
+		}
+	}
+
+	public function parseData($data, $where = null) {
 		foreach ($data as $field => $value) {
-            $this->fields[] = $field;
-            $this->values[] = $value;
             $this->binds[] = "$field=:$field";
+        }
+        foreach ($where as $wfield => $wvalue) {
+        	$this->where[] = "$wfield=:$wfield";
         }
 	}
 
@@ -110,7 +133,6 @@ class Database {
 
 	public function reset() {
 		unset($this->binds);
-		unset($this->values);
-		unset($this->fields);
+		unset($this->where);
 	}
 }
