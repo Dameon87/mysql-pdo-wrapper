@@ -14,6 +14,9 @@ $data = array(
 	'email' => $email,
 	'name' => $name
 );
+$selectdata = array(
+	'email' => $email
+);
 $where = 'email="user@example.com"';
 
 // Lets test a simple insert.
@@ -23,10 +26,26 @@ if ($db->insert($table, $data)) {
 	echo '[Error] : ' . $db->getLastError();
 }
 
+// Call a Reset to ensure a clean slate.
+$db->Reset();
+
 // Here is a simple update query.
 
 if ($db->update($table, $data, $where)) {
 	echo '[Success] : Rows Affected ' . $db->rowsAffected();
 } else {
 	echo '[Fail] : ' . $db->getLastError();
+}
+
+// Call a Reset to ensure a clean slate.
+$db->Reset();
+
+// Here is a simple select query.
+
+$result = $db->select($table, $selectdata);
+if ($result) {
+    echo '[Success] : Rows Affected ' . $db->rowsAffected();
+    var_dump($result);
+} else {
+    echo '[Fail] : ' . $db->getLastError();
 }
