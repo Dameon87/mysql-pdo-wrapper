@@ -7,7 +7,8 @@ class Database {
 	private $sql;
 	private $lastError;
 	private $rows;
-
+	private $lastId;
+	
 	public function __construct($dbname, $dbuser, $dbpass, $dbhost = 'localhost', $charset = 'utf8') {
 		$dsn = 'mysql:dbname=' . $dbname . ';host=' . $dbhost . ';charset=' . $charset;
 		try {
@@ -78,4 +79,8 @@ class Database {
 	public function rowsAffected() {
 		return $this->rows;
 	}
+	
+	public function getLastId() {
+        	return $this->lastId;
+    	}
 }
