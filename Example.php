@@ -4,7 +4,7 @@ require_once('Database.php');
 
 $db = new Database('Databse-name', 'Database-user', 'Database-pass');
 
-// Lets test a simple insert.
+// Set our variables
 $table = 'users';
 $username = 'example';
 $email = 'user@example.net';
@@ -15,12 +15,13 @@ $data = array(
 	'name' => $name
 );
 $where = 'email="user@example.com"';
+
+// Lets test a simple insert.
 if ($db->insert($table, $data)) {
 	echo 'Data Inserted. ID: ' . $db->getLastId();
 } else {
 	echo 'Error: ' . $db->getLastError();
 }
-
 
 // Here is a simple update query.
 
