@@ -27,10 +27,15 @@ class Database {
 		}
 	}
 
-	public function insert($table = $this->table, $data) {
+	public function insert($data, $table = null) {
+		if (!$table) { $table = $this->table; }
 		$this->parseData($data);
 
-		$sql = "INSERT INTO " . $table . "(" . implode($this->fields, ', ') . ") VALUES(" . implode($this->binds, ', ') .")";
+		foreach ($data as $field => $key) {
+			$inserts[] = ":$field";
+		}
+
+		$sql = "INSERT INTO " . $table . " (" . implode($this->fields, ', ') . ") VALUES(" . implode($inserts, ',') .")";
 		$this->statement = $this->conn->prepare($sql);
 		$this->bind($data);
 		$this->statement->execute();
@@ -44,7 +49,8 @@ class Database {
 		}
 	}
 
-	public function update($table = $this->table, $data, $where) {
+	public function update($data, $where, $table = null) {
+        if (!$table) { $table = $this->table; }
 		$this->parseData($data, $where);
 
 		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . implode($this->where, ',');
@@ -65,7 +71,8 @@ class Database {
         }
 	}
 
-	public function select($table = $this->table, $data, $fields = "*") {
+	public function select($data, $fields = "*", $table = null) {
+        if (!$table) { $table = $this->table; }
 		$this->parseData($data);
 
 		$sql = "SELECT " . $fields . " FROM " . $table . " WHERE " . implode($this->binds, ',');
@@ -73,7 +80,7 @@ class Database {
 		$this->bind($data);
 		$this->statement->execute();
 		$this->reset();
-		
+
 		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
 			return $this->statement->fetchAll(PDO::FETCH_OBJ);
 		} else if ($this->statement->rowCount() < 1) {
@@ -85,7 +92,8 @@ class Database {
 		}
 	}
 
-	public function delete($table = $this->table, $data) {
+	public function delete($data, $table = null) {
+        if (!$table) { $table = $this->table; }
 		$this->parseData($data);
 
 		$sql = "DELETE FROM " . $table . " WHERE " . implode($this->binds, ',');
@@ -108,11 +116,17 @@ class Database {
 	public function parseData($data, $where = null) {
 		foreach ($data as $field => $value) {
             $this->binds[] = "$field=:$field";
+			$this->fields[] = $field;
+			//$this->inserts[] = ":$field";
         }
-        foreach ($where as $wfield => $wvalue) {
-        	$this->where[] = "$wfield=:$wfield";
-        }
+		if ($where) {
+        	foreach ($where as $wfield => $wvalue) {
+        		$this->where[] = "$wfield=:$wfield";
+        	}
+		}
 	}
+
+
 
 	public function bind($data) {
 		foreach ($data as $field => &$value) {
@@ -138,6 +152,7 @@ class Database {
 
 	public function reset() {
 		unset($this->binds);
+		unset($this->fields);
 		unset($this->where);
 	}
 }

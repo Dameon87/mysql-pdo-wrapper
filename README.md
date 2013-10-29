@@ -12,24 +12,24 @@ Requires PHP 5.4+ at this time.
 All examples below include the Table argument. This can be ommitted with $db->setTable('TableName');
 ###Insert example:
 ```
-$db->insert('Table', array('field' => 'value, 'field2' => 'value2');
+$db->insert(array('field' => 'value, 'field2' => 'value2'), 'Table');
 ```
-#####Parameters: (Table, Array of Fields=>Values)
+#####Parameters: (Array of Fields=>Values, Table)
 
 ###Update example:
 ```
-$db->insert('Table', array('field' => 'value', 'field2' => 'value2', 'field3="value3"');
+$db->insert(array('field' => 'value', 'field2' => 'value2', 'field3="value3"'), 'Table');
 ```
-#####Parameters: (Table, Array of Fields=>Values, WHERE)
+#####Parameters: (Array of Fields=>Values, WHERE, Table)
 
 ###Select example:
 ```
-$db->select('Table', array('field' => 'value'), 'fields,defaults,to,*');
+$db->select(array('field' => 'value'), 'fields,defaults,to,*', 'Table');
 ```
-#####Parameters: (Table, Array of Fields=>Values, Fields)
+#####Parameters: (Array of Fields=>Values, Fields, Table)
 
 ###Delete example:
 ```
-$db->delete('Table', array('field' => 'value'), array('field' => 'value'));
+$db->delete(array('field' => 'value'), array('field' => 'value'), 'Table');
 ```
-#####Parameters: (Table, Array of Fields=>Values, Array of Search Fields=>Values)
+#####Parameters: (Array of Fields=>Values, Array of Search Fields=>Values, Table)
