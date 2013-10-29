@@ -9,6 +9,7 @@ Example of use can be found in Examples.php
 
 Requires PHP 5.4+ at this time.
 
+All examples below include the Table argument. This can be ommitted with $db->setTable('TableName');
 ###Insert example:
 ```
 $db->insert('Table', array('field' => 'value, 'field2' => 'value2');

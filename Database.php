@@ -16,6 +16,7 @@ class Database {
 	private $binds;
 	private $where;
 	private $statement;
+	public $table;
 
 	public function __construct($dbname, $dbuser, $dbpass, $dbhost = 'localhost', $charset = 'utf8') {
 		$dsn = 'mysql:dbname=' . $dbname . ';host=' . $dbhost . ';charset=' . $charset;
@@ -26,7 +27,7 @@ class Database {
 		}
 	}
 
-	public function insert($table, $data) {
+	public function insert($table = $this->table, $data) {
 		$this->parseData($data);
 
 		$sql = "INSERT INTO " . $table . "(" . implode($this->fields, ', ') . ") VALUES(" . implode($this->binds, ', ') .")";
@@ -43,7 +44,7 @@ class Database {
 		}
 	}
 
-	public function update($table, $data, $where) {
+	public function update($table = $this->table, $data, $where) {
 		$this->parseData($data, $where);
 
 		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . implode($this->where, ',');
@@ -64,7 +65,7 @@ class Database {
         }
 	}
 
-	public function select($table, $data, $fields = "*") {
+	public function select($table = $this->table, $data, $fields = "*") {
 		$this->parseData($data);
 
 		$sql = "SELECT " . $fields . " FROM " . $table . " WHERE " . implode($this->binds, ',');
@@ -84,7 +85,7 @@ class Database {
 		}
 	}
 
-	public function delete($table, $data) {
+	public function delete($table = $this->table, $data) {
 		$this->parseData($data);
 
 		$sql = "DELETE FROM " . $table . " WHERE " . implode($this->binds, ',');
@@ -129,6 +130,10 @@ class Database {
 
 	public function getLastId() {
 		return $this->statement->lastInsertId();
+	}
+
+	public function setTable($table) {
+		$this->table = $table;
 	}
 
 	public function reset() {
