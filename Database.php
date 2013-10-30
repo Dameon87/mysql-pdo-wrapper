@@ -50,7 +50,7 @@ class Database {
 	}
 
 	public function update($data, $where, $table = null) {
-        if (!$table) { $table = $this->table; }
+        	if (!$table) { $table = $this->table; }
 		$this->parseData($data, $where);
 
 		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . implode($this->where, ' AND ');
@@ -61,14 +61,14 @@ class Database {
 		$this->reset();
 
 		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
-            return true;
+            		return true;
 		} else if ($this->statement->rowCount() < 1) {
 			$this->lastError = "Query Succeeded, but " . $this->statement->rowCount() . " Rows were affected.";
 			return false;
-        } else {
+        	} else {
 			$this->lastError = "Error: " . $this->errorInfo()[2];
 			return false;
-        }
+        	}
 	}
 
 	public function select($data, $fields = "*", $table = null) {
