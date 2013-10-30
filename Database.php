@@ -53,7 +53,7 @@ class Database {
         if (!$table) { $table = $this->table; }
 		$this->parseData($data, $where);
 
-		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . implode($this->where, ',');
+		$sql = "UPDATE " . $table . " SET " . implode($this->binds, ',') . " WHERE " . implode($this->where, ' AND ');
 		$this->statement = $this->conn->prepare($sql);
 		$this->bind($data);
 		$this->bind($where);
@@ -75,12 +75,11 @@ class Database {
         if (!$table) { $table = $this->table; }
 		$this->parseData($data);
 
-		$sql = "SELECT " . $fields . " FROM " . $table . " WHERE " . implode($this->binds, ',');
+		$sql = "SELECT " . $fields . " FROM " . $table . " WHERE " . implode($this->binds, ' AND ');
 		$this->statement = $this->conn->prepare($sql);
 		$this->bind($data);
 		$this->statement->execute();
 		$this->reset();
-
 		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
 			return $this->statement->fetchAll(PDO::FETCH_OBJ);
 		} else if ($this->statement->rowCount() < 1) {
@@ -95,14 +94,12 @@ class Database {
 	public function delete($data, $table = null) {
         if (!$table) { $table = $this->table; }
 		$this->parseData($data);
-
-		$sql = "DELETE FROM " . $table . " WHERE " . implode($this->binds, ',');
+		$sql = "DELETE FROM " . $table . " WHERE " . implode($this->binds, ' AND ');
 		$this->statement = $this->conn->prepare($sql);
 		$this->bind($data);
 		$this->statement->execute();
 		$this->reset();
-
-		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
+		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >=1) {
 			return $this->statement->fetchAll(PDO::FETCH_OBJ);
 		} else if ($this->statement->rowCount() < 1) {
 			$this->lastError = "Query Succeeded, but " . $this->statement->rowCount() . " Rows were affected.";
