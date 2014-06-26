@@ -6,6 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html
 * @version Alpha
 */
+namespace ASOJon\Database;
 
 class Database {
 
