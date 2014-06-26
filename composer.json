@@ -1,5 +1,5 @@
 {
-    "name": "asojon/mysql-pdo-wrapper",
+    "name": "aroy-galilee/mysql-pdo-wrapper",
     "description": "A very simple wrapper around PDO and MySQL, making use of prepared statements.",
     "license": "GPLv3",
     "authors": [
