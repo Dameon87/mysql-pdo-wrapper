@@ -6,6 +6,7 @@
 * @license http://www.gnu.org/licenses/gpl-3.0.html
 * @version Alpha
 */
+namespace ASOJon\Database;
 
 class Database {
 
@@ -21,8 +22,8 @@ class Database {
 	public function __construct($dbname, $dbuser, $dbpass, $dbhost = 'localhost', $charset = 'utf8') {
 		$dsn = 'mysql:dbname=' . $dbname . ';host=' . $dbhost . ';charset=' . $charset;
 		try {
-			$this->conn = new PDO($dsn, $dbuser, $dbpass);
-		} catch (PDOException $e) {
+			$this->conn = new \PDO($dsn, $dbuser, $dbpass);
+		} catch (\PDOException $e) {
 			echo 'Database Connection Failed with Message: ' . $e->getMessage();
 		}
 	}
@@ -81,7 +82,7 @@ class Database {
 		$this->statement->execute();
 		$this->reset();
 		if ($this->statement->errorCode() === '00000' && $this->statement->rowCount() >= 1) {
-			return $this->statement->fetchAll(PDO::FETCH_OBJ);
+			return $this->statement->fetchAll(\PDO::FETCH_OBJ);
 		} else if ($this->statement->rowCount() < 1) {
 			$this->lastError = "Query Succeeded, but " . $this->statement->rowCount() . " Rows were affected.";
 			return false;
