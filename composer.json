@@ -14,7 +14,7 @@
     },
 	"autoload": {
 		"psr-0": {
-		"ASOJon\\Database": "src/"
+		"": "src/"
 		}
 	}
 }
